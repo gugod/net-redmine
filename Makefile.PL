@@ -4,7 +4,9 @@ all_from 'lib/Net/Redmine.pm';
 
 requires
     'WWW::Mechanize' => 0,
-    'Test::Declare' => 0.04;
+    'pQuery' => 0,
+    'HTML::WikiConverter' => 0,
+    'HTML::WikiConverter::Markdown' => 0;
 
 repository 'http://github.com/gugod/net-redmine'
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env perl -w
 use strict;
-use Test::Declare;
+use Test::More;
 use Net::Redmine;
 
 unless ($_ = $ENV{NET_REDMINE_TEST}) {
@@ -15,26 +15,33 @@ unless ($server && $user && $password) {
     exit;
 }
 
-plan tests => blocks;
+plan tests => 4;
 
-describe "Testing about Net::Redmine::Ticket class" => run {
-    my $redmine;
+note "Testing about Net::Redmine::Ticket class";
 
-    init {
-        $redmine = Net::Redmine::Connection->new(
-            url => $server,
-            user => $user,
-            password => $password
-        );
-    };
+my $redmine = Net::Redmine::Connection->new(
+    url => $server,
+    user => $user,
+    password => $password
+);
 
-    test "The newly created ticket id should looks sane" => run {
-        my $ticket = Net::Redmine::Ticket->new( connection => $redmine );
-        my $id = $ticket->create(
-            subject => "testing Net::Redmine $$",
-            description => "testing. testing. testing."
-        );
+my $subject = "Testing Net::Redmine $$ " . time;
 
-        like $id, qr/^\d+$/;
-    };
-};
+note "The newly created ticket id should looks sane";
+
+my $ticket = Net::Redmine::Ticket->new( connection => $redmine );
+my $id = $ticket->create(
+    subject => $subject,
+    description => "testing. testing. testing."
+);
+like $id, qr/^\d+$/;
+
+
+note "Loading ticket content.";
+
+my $ticket2 = Net::Redmine::Ticket->new(connection => $redmine);
+$ticket2->load($id);
+
+is($ticket2->id, $ticket->id);
+is($ticket2->subject, $ticket->subject);
+is($ticket2->description, $ticket->description);

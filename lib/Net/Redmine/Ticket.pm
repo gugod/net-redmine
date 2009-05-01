@@ -43,6 +43,45 @@ sub create {
     }
 }
 
+# use IO::All;
+use pQuery;
+use HTML::WikiConverter;
+use Encode;
+
+sub load {
+    my ($self, $id) = @_;
+
+    my $mech = $self->connection->get_project_overview->mechanize;
+    $mech->submit_form(
+        form_number => 1,
+        fields => {
+            q => "#" . $id
+        }
+    );
+
+    unless ($mech->response->is_success) {
+        die "Failed to create a new ticket\n";
+    }
+
+    my $html = $mech->content;
+
+    # my $html = io("/tmp/issue.html")->utf8->all;
+
+    my $p = pQuery($html);
+
+    my $wc = new HTML::WikiConverter( dialect => 'Markdown' );
+
+    my $description = $wc->html2wiki( Encode::encode_utf8($p->find(".issue .wiki")->html) );
+
+    my $subject = $p->find(".issue h3")->text;
+
+    $self->id($id);
+    $self->subject($subject);
+    $self->description($description);
+
+    return $self;
+}
+
 
 __PACKAGE__->meta->make_immutable;
 no Any::Moose;
