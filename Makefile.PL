@@ -8,7 +8,7 @@ requires
     'HTML::WikiConverter' => 0,
     'HTML::WikiConverter::Markdown' => 0;
 
-repository 'http://github.com/gugod/net-redmine'
+repository 'http://github.com/gugod/net-redmine';
 
 tests 't/*.t';
 author_tests 'xt';
@@ -16,4 +16,5 @@ author_tests 'xt';
 build_requires 'Test::More';
 
 auto_include;
+auto_license;
 WriteAll;

@@ -30,7 +30,7 @@ Kang-min Liu E<lt>gugod@gugod.orgE<gt>
 
 L<http://redmine.org>, L<Net::Trac>
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
 Copyright (c) 2009, Kang-min Liu C<< <gugod@gugod.org> >>.
 
