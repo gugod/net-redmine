@@ -4,6 +4,9 @@ use strict;
 use warnings;
 our $VERSION = '0.01';
 
+use Net::Redmine::Connection;
+use Net::Redmine::Ticket;
+
 1;
 __END__
 
