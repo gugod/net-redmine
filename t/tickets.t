@@ -11,7 +11,7 @@ unless ($_ = $ENV{NET_REDMINE_TEST}) {
 my ($server, $user, $password) = split / /;
 
 unless ($server && $user && $password) {
-    plan skip_all => "No password";
+    plan skip_all => "No server and/or login credentials.";
     exit;
 }
 
