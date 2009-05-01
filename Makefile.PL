@@ -16,5 +16,6 @@ author_tests 'xt';
 build_requires 'Test::More';
 
 auto_include;
-auto_license;
+# auto_license;
 WriteAll;
+
