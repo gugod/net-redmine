@@ -9,3 +9,6 @@ __DATA__
 Kang-min Liu
 gugod@gugod.org
 Net::Redmine
+redmine
+API
+LICENCE

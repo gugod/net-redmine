@@ -12,7 +12,7 @@ __END__
 
 =head1 NAME
 
-Net::Redmine - A mechanized-based programming API againas redmine server.
+Net::Redmine - A mechanized-based programming API against redmine server.
 
 =head1 SYNOPSIS
 
@@ -20,7 +20,7 @@ Net::Redmine - A mechanized-based programming API againas redmine server.
 
 =head1 DESCRIPTION
 
-Net::Redmine is an mechanized-based programming API againas redmine server.
+Net::Redmine is an mechanized-based programming API against redmine server.
 
 =head1 AUTHOR
 
