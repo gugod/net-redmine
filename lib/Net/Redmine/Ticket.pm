@@ -13,8 +13,6 @@ has description => (is => "rw", isa => "Str");
 has status      => (is => "rw", isa => "Str");
 has priority    => (is => "rw", isa => "Str");
 
-use WWW::Mechanize;
-
 sub create {
     my ($self, %attr) = @_;
 
@@ -24,28 +22,13 @@ sub create {
         }
     }
 
-    my $mech = WWW::Mechanize->new;
-    $mech->get($self->connection->url);
+    my $mech = $self->connection->get_project_overview->mechanize;
 
-    if ($mech->uri =~ /\/login/) {
-        $mech->submit_form(
-            form_number => 2,
-            fields => {
-                username => $self->connection->user,
-                password => $self->connection->password
-            }
-        );
-
-        if ($mech->uri ne $self->connection->url) {
-            $mech->get($self->connection->url);
-        }
-    }
-    
     $mech->follow_link( url_regex => qr[/issues/new$] );
-    
+
     $mech->form_id("issue-form");
-    $mech->field("issue[subject]", $self->subject);
-    $mech->field("issue[description]", $self->description);
+    $mech->field("issue[subject]" => $self->subject);
+    $mech->field("issue[description]" => $self->description);
     $mech->submit;
 
     unless ($mech->response->is_success) {
