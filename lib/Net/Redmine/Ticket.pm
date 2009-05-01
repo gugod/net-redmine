@@ -33,7 +33,6 @@ sub create {
 
     unless ($mech->response->is_success) {
         die "Failed to create a new ticket\n";
-        return undef;
     }
 
     if ($mech->uri =~ m[/issues/show/(\d+)$]) {
