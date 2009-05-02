@@ -14,6 +14,7 @@ has status      => (is => "rw", isa => "Str");
 has priority    => (is => "rw", isa => "Str");
 
 has note        => (is => "rw", isa => "Str");
+has histories   => (is => "rw", isa => "ArrayRef", lazy_build => 1);
 
 sub create {
     my ($self, %attr) = @_;
@@ -111,9 +112,24 @@ sub save {
     return $self;
 }
 
-sub histories {
+sub _build_histories {
     my ($self) = @_;
-    die "Cannot lookup ticket histories without id.\n" unless $self->id;    
+    die "Cannot lookup ticket histories without id.\n" unless $self->id;
+    my $mech = $self->connection->get_issues($self->id)->mechanize;
+
+    my $p = pQuery($mech->content);
+
+    my $n = $p->find(".journal")->size;
+
+    return [
+        map {
+            Net::Redmine::TicketHistory->new(
+                connection => $self->connection,
+                id => $_,
+                ticket_id => $self->id
+            )
+        } (1..$n)
+    ];
 }
 
 __PACKAGE__->meta->make_immutable;
