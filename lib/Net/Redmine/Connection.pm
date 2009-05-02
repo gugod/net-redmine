@@ -42,6 +42,23 @@ sub get_project_overview {
     return $self;
 }
 
+sub get_issues {
+    my ($self, $id) = @_;
+    $self->get_project_overview;
+    my $mech = $self->mechanize;
+
+    if ($id) {
+        $mech->submit_form(form_number => 1, fields => { q => "#" . $id });
+        die "Failed to get the ticket(id = $id)\n" unless $mech->response->is_success;
+    }
+    else {
+        $mech->follow_link( url_regex => qr[/issues$] );
+        die "Failed to get the ticket overview page\n" unless $mech->response->is_success;
+    }
+
+    return $self;
+}
+
 __PACKAGE__->meta->make_immutable;
 no Any::Moose;
 1;

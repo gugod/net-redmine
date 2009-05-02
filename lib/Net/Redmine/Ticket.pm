@@ -84,6 +84,25 @@ sub load {
     return $self;
 }
 
+sub save {
+    my ($self) = @_;
+    die "Cannot save a ticket without id.\n" unless $self->id;
+
+    my $mech = $self->connection->get_issues($self->id)->mechanize;
+    $mech->follow_link( url_regex => qr[/issues/\d+/edit$] );
+
+    $mech->form_id("issue-form");
+    $mech->set_fields(
+        'issue[status_id]' => $self->status,
+        # 'issue[description]' => $self->description,
+        # 'issue[subject]' => $self->subject,
+    );
+    $mech->submit;
+    die "Ticket save failed (ticket id = @{[ $self->id ]})\n"
+        unless $mech->response->is_success;
+
+    return $self;
+}
 
 __PACKAGE__->meta->make_immutable;
 no Any::Moose;
