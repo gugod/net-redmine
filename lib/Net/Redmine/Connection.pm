@@ -42,6 +42,8 @@ sub get_project_overview {
     return $self;
 }
 
+__PACKAGE__->meta->make_immutable;
+no Any::Moose;
 1;
 
 __END__
