@@ -74,9 +74,12 @@ sub load {
 
     my $subject = $p->find(".issue h3")->text;
 
+    my $status = $p->find(".issue .status")->eq(1)->text;
+
     $self->id($id);
     $self->subject($subject);
     $self->description($description);
+    $self->status($status);
 
     return $self;
 }
