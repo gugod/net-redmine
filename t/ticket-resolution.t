@@ -1,15 +1,13 @@
 #!/usr/bin/env perl -w
 use strict;
 use Test::More;
-
-require 't/net_redmine_test.pl';
-my ($server, $user, $password) = net_redmine_test();
-
 use Net::Redmine;
 
-plan tests => 2;
+require 't/net_redmine_test.pl';
 
-my $r = Net::Redmine->new(url => $server,user => $user, password => $password);
+my $r = new_net_redmine();
+
+plan tests => 2;
 
 my $id;
 {
