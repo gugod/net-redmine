@@ -13,6 +13,8 @@ has description => (is => "rw", isa => "Str");
 has status      => (is => "rw", isa => "Str");
 has priority    => (is => "rw", isa => "Str");
 
+has note        => (is => "rw", isa => "Str");
+
 sub create {
     my ($self, %attr) = @_;
 
@@ -94,14 +96,24 @@ sub save {
     $mech->form_id("issue-form");
     $mech->set_fields(
         'issue[status_id]' => $self->status,
-        # 'issue[description]' => $self->description,
-        # 'issue[subject]' => $self->subject,
+        'issue[description]' => $self->description,
+        'issue[subject]' => $self->subject
     );
+
+    if ($self->note) {
+        $mech->set_fields(notes => $self->note);
+    }
+
     $mech->submit;
     die "Ticket save failed (ticket id = @{[ $self->id ]})\n"
         unless $mech->response->is_success;
 
     return $self;
+}
+
+sub histories {
+    my ($self) = @_;
+    die "Cannot lookup ticket histories without id.\n" unless $self->id;    
 }
 
 __PACKAGE__->meta->make_immutable;
