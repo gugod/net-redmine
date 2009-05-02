@@ -28,10 +28,22 @@ sub create {
     return $self->create_ticket(%$_) if $_ = $args{ticket};
 }
 
+sub lookup {
+    my ($self, %args) = @_;
+    return $self->lookup_ticket(%$_) if $_ = $args{ticket};
+}
+
 sub create_ticket {
     my ($self, %args) = @_;
     my $t = Net::Redmine::Ticket->new(connection => $self->connection);
     $t->create(%args);
+    return $t;
+}
+
+sub lookup_ticket {
+    my ($self, %args) = @_;
+    my $t =  Net::Redmine::Ticket->new(connection => $self->connection);
+    $t->load($args{id});
     return $t;
 }
 
