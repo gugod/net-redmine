@@ -35,7 +35,7 @@ sub create {
         die "Failed to create a new ticket\n";
     }
 
-    if ($mech->uri =~ m[/issues/show/(\d+)$]) {
+    if ($mech->uri =~ m[/issues(?:/show)?/(\d+)$]) {
         my $id = $1;
         $self->id($id);
         return $id;
