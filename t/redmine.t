@@ -2,17 +2,8 @@
 use strict;
 use Test::More;
 
-unless ($_ = $ENV{NET_REDMINE_TEST}) {
-    plan skip_all => "Need NET_REDMINE_TEST env var";
-    exit;
-}
-
-my ($server, $user, $password) = split / /;
-
-unless ($server && $user && $password) {
-    plan skip_all => "No server and/or login credentials.";
-    exit;
-}
+require 't/net_redmine_test.pl';
+my ($server, $user, $password) = net_redmine_test();
 
 plan tests => 3;
 
