@@ -2,7 +2,7 @@
 
 * 0.02
 ** Implement a top-level Net::Redmine API
-** TODO Implement Identity mapping
+** Implement ticket identity mapping using Net::Redmine APIs
 
 * 0.01
 ** Implement Ticket creating and loading.

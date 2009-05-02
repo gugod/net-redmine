@@ -7,7 +7,7 @@ has connection => (
     required => 1
 );
 
-has id          => (is => "rw", isa => "Num");
+has id          => (is => "rw", isa => "Int");
 has subject     => (is => "rw", isa => "Str");
 has description => (is => "rw", isa => "Str");
 has status      => (is => "rw", isa => "Str");

@@ -10,6 +10,12 @@ has connection => (
     required => 1
 );
 
+has _live_ticket_objects => (
+    is => "rw",
+    isa => "HashRef",
+    default => sub { {} }
+);
+
 sub BUILDARGS {
     my $class = shift;
     my %args = @_;
@@ -37,13 +43,23 @@ sub create_ticket {
     my ($self, %args) = @_;
     my $t = Net::Redmine::Ticket->new(connection => $self->connection);
     $t->create(%args);
-    return $t;
+
+    return $self->lookup_ticket(id => $t->id);
 }
 
 sub lookup_ticket {
     my ($self, %args) = @_;
+    my $id = $args{id};
+
+    my $live = $self->_live_ticket_objects;
+    if (exists $live->{$id}) {
+        return $live->{$id};
+    }
+
     my $t =  Net::Redmine::Ticket->new(connection => $self->connection);
-    $t->load($args{id});
+    $t->load($id);
+
+    $live->{$id} = $t;
     return $t;
 }
 
@@ -58,9 +74,75 @@ Net::Redmine - A mechanized-based programming API against redmine server.
 
   use Net::Redmine;
 
+  my $r = Net::Redmine->new(
+      url => $server,
+      user => $user,
+      password => $password
+  );
+
+  # Create a new ticket
+  my $t1 = $r->create(
+      ticket => {
+          subject => "bug in the bag!"
+          description => "please eliminate the bug for me".
+      }
+  );
+
+  # Load an existing one.
+  my $t2 = $r->lookup(
+      ticket => {
+          id => 42
+      }
+  );
+
 =head1 DESCRIPTION
 
 Net::Redmine is an mechanized-based programming API against redmine server.
+
+=head1 METHODS
+
+=over
+
+=item new(url => ..., user => ..., password => ...)
+
+Constructor. You need to construct a C<Net::Redmine> object before you
+can do anything. The parameters to this function is a list of
+key-value pairs. All of these 3 pairs are required.
+
+The C<url> should points to a project url. Like http://example.org/projects/foo.
+It's the one that points you to the project overview tab.
+
+The user and the password are the login credentials to login this
+project.
+
+Notice: One C<Net::Redmine> object can only handles one project on a
+redmine server. You should create multiple C<Net::Redmine> objects if
+you're trying to manipulate multiple project at the same program.
+
+=item create( ticket => { ... } )
+
+The C<create> instance method can create tickets. In the future releases
+it could also be used to create other kinds of assets.
+
+The value to the C<ticket> key is a HashRef that should at least
+contain C<subject> and <description> of the ticket. For example:
+
+    my $t = $r->create(ticket => {
+        subject => "Got a bug",
+        description => "Found a bug in the bag"
+    });
+
+The returned value of this method is a C<Net::Redmine::Ticket> object.
+Also read the document of that class to see how to use it.
+
+=item lookup( ticket => { id => Integer } }
+
+Given a ticket id, this instance method load the ticket content from
+the server, it also returns a C<Net::Redmine::Ticket> object.
+
+At this point, only C<id> can be specified.
+
+=back
 
 =head1 AUTHOR
 
