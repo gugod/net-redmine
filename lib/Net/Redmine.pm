@@ -1,11 +1,39 @@
 package Net::Redmine;
-
-use strict;
-use warnings;
-our $VERSION = '0.01';
-
+use Any::Moose;
+our $VERSION = '0.02';
 use Net::Redmine::Connection;
 use Net::Redmine::Ticket;
+
+has connection => (
+    is => "ro",
+    isa => "Net::Redmine::Connection",
+    required => 1
+);
+
+sub BUILDARGS {
+    my $class = shift;
+    my %args = @_;
+
+    $args{connection} = Net::Redmine::Connection->new(
+        url => delete $args{url},
+        user => delete $args{user},
+        password => delete $args{password}
+    );
+
+    return $class->SUPER::BUILDARGS(%args);
+}
+
+sub create {
+    my ($self, %args) = @_;
+    return $self->create_ticket(%$_) if $_ = $args{ticket};
+}
+
+sub create_ticket {
+    my ($self, %args) = @_;
+    my $t = Net::Redmine::Ticket->new(connection => $self->connection);
+    $t->create(%args);
+    return $t;
+}
 
 1;
 __END__
