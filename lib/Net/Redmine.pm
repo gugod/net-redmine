@@ -15,8 +15,8 @@ sub BUILDARGS {
     my %args = @_;
 
     $args{connection} = Net::Redmine::Connection->new(
-        url => delete $args{url},
-        user => delete $args{user},
+        url      => delete $args{url},
+        user     => delete $args{user},
         password => delete $args{password}
     );
 
