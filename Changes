@@ -1,8 +1,10 @@
--*- org -*-
+0.03:
+  - Implement ticket status changes
+  - Implement ticket history
 
-0.02
-* Implement a top-level Net::Redmine API
-* Implement ticket identity mapping using Net::Redmine APIs
+0.02:
+  - Implement a top-level Net::Redmine API
+  - Implement ticket identity mapping using Net::Redmine APIs
 
-0.01
-* Implement Ticket creating and loading.
+0.01:
+  _ Implement Ticket creating and loading.
