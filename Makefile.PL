@@ -3,10 +3,11 @@ name 'Net-Redmine';
 all_from 'lib/Net/Redmine.pm';
 
 requires
-    'WWW::Mechanize' => 0,
-    'pQuery' => 0,
-    'HTML::WikiConverter' => 0,
-    'HTML::WikiConverter::Markdown' => 0;
+    'Any::Moose' => 0.07,
+    'WWW::Mechanize' => 1.52,
+    'pQuery' => 0.07,
+    'HTML::WikiConverter' => 0.68,
+    'HTML::WikiConverter::Markdown' => 0.05;
 
 repository 'http://github.com/gugod/net-redmine';
 
