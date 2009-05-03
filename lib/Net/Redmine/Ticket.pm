@@ -61,8 +61,9 @@ sub load {
         }
     );
 
-    unless ($mech->response->is_success) {
-        die "Failed to create a new ticket\n";
+    die "Failed to load the ticket with id $id\n" unless $mech->response->is_success;
+    unless ($mech->uri =~ m[/issues/\d+$]) {
+        return undef;
     }
 
     my $html = $mech->content;
@@ -112,6 +113,22 @@ sub save {
     return $self;
 }
 
+sub delete {
+    my ($self) = @_;
+    die "Cannot delete the ticket without id.\n" unless $self->id;
+
+    my $id = $self->id;
+    my $mech = $self->connection->get_issues($id)->mechanize;
+    my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
+
+    $mech->post($link->url_abs());
+
+    die "Cannot delete the ticket\n" unless $mech->response->is_success;
+
+    $self->id(-1);
+    return $self;
+}
+
 sub _build_histories {
     my ($self) = @_;
     die "Cannot lookup ticket histories without id.\n" unless $self->id;
@@ -151,4 +168,3 @@ Net::Redmine::Ticket - Represents a ticket.
 
 
 =cut
-
