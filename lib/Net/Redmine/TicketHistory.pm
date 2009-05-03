@@ -18,7 +18,7 @@ use pQuery;
 
 sub _build__ticket_page_html {
     my ($self) = @_;
-    my $mech = $self->connection->get_issues($self->ticket_id)->mechanize;
+    my $mech = $self->connection->get_issues_page($self->ticket_id)->mechanize;
     return $mech->content;
 }
 

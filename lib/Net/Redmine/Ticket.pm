@@ -25,9 +25,7 @@ sub create {
         }
     }
 
-    my $mech = $self->connection->get_project_overview->mechanize;
-
-    $mech->follow_link( url_regex => qr[/issues/new$] );
+    my $mech = $self->connection->get_new_issue_page()->mechanize;
 
     $mech->form_id("issue-form");
     $mech->field("issue[subject]" => $self->subject);
@@ -92,7 +90,7 @@ sub save {
     my ($self) = @_;
     die "Cannot save a ticket without id.\n" unless $self->id;
 
-    my $mech = $self->connection->get_issues($self->id)->mechanize;
+    my $mech = $self->connection->get_issues_page($self->id)->mechanize;
     $mech->follow_link( url_regex => qr[/issues/\d+/edit$] );
 
     $mech->form_id("issue-form");
@@ -118,7 +116,7 @@ sub destroy {
     die "Cannot delete the ticket without id.\n" unless $self->id;
 
     my $id = $self->id;
-    my $mech = $self->connection->get_issues($id)->mechanize;
+    my $mech = $self->connection->get_issues_page($id)->mechanize;
     my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
 
     die "Cannot delete the ticket\n" unless $link;
@@ -134,7 +132,7 @@ sub destroy {
 sub _build_histories {
     my ($self) = @_;
     die "Cannot lookup ticket histories without id.\n" unless $self->id;
-    my $mech = $self->connection->get_issues($self->id)->mechanize;
+    my $mech = $self->connection->get_issues_page($self->id)->mechanize;
 
     my $p = pQuery($mech->content);
 
@@ -149,6 +147,13 @@ sub _build_histories {
             )
         } (1..$n)
     ];
+}
+
+sub refresh {
+    my ($self) = @_;
+    die "Cannot lookup ticket histories without id.\n" unless $self->id;
+
+    
 }
 
 __PACKAGE__->meta->make_immutable;
