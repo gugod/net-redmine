@@ -51,31 +51,15 @@ use Encode;
 sub load {
     my ($self, $id) = @_;
 
-    my $mech = $self->connection->get_project_overview->mechanize;
-    $mech->submit_form(
-        form_number => 1,
-        fields => {
-            q => "#" . $id
-        }
-    );
-
-    die "Failed to load the ticket with id $id\n" unless $mech->response->is_success;
-    unless ($mech->uri =~ m[/issues/\d+$]) {
-        return undef;
-    }
-
+    my $mech = $self->connection->get_issues_page($id)->mechanize;
     my $html = $mech->content;
 
     # my $html = io("/tmp/issue.html")->utf8->all;
 
     my $p = pQuery($html);
-
     my $wc = new HTML::WikiConverter( dialect => 'Markdown' );
-
     my $description = $wc->html2wiki( Encode::encode_utf8($p->find(".issue .wiki")->html) );
-
     my $subject = $p->find(".issue h3")->text;
-
     my $status = $p->find(".issue .status")->eq(1)->text;
 
     $self->id($id);
@@ -84,6 +68,12 @@ sub load {
     $self->status($status);
 
     return $self;
+}
+
+sub refresh {
+    my ($self) = @_;
+    die "Cannot lookup ticket histories without id.\n" unless $self->id;
+    return $self->load($self->id);
 }
 
 sub save {
@@ -147,13 +137,6 @@ sub _build_histories {
             )
         } (1..$n)
     ];
-}
-
-sub refresh {
-    my ($self) = @_;
-    die "Cannot lookup ticket histories without id.\n" unless $self->id;
-
-    
 }
 
 __PACKAGE__->meta->make_immutable;
