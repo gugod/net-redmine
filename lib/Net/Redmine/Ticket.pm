@@ -113,7 +113,7 @@ sub save {
     return $self;
 }
 
-sub delete {
+sub destroy {
     my ($self) = @_;
     die "Cannot delete the ticket without id.\n" unless $self->id;
 
@@ -121,9 +121,11 @@ sub delete {
     my $mech = $self->connection->get_issues($id)->mechanize;
     my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
 
+    die "Cannot delete the ticket\n" unless $link;
+
     $mech->post($link->url_abs());
 
-    die "Cannot delete the ticket\n" unless $mech->response->is_success;
+    die "Failed to delete the ticket\n" unless $mech->response->is_success;
 
     $self->id(-1);
     return $self;

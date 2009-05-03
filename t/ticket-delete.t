@@ -13,7 +13,7 @@ my $id = $ticket->id;
 
 diag "Created 1 ticket, id = $id\n";
 
-$ticket->delete;
+$ticket->destroy;
 
 my $t2 = Net::Redmine::Ticket->new(connection => $r->connection);
 ok(!$t2->load($id), "cannot load it once the ticket is deleted.");
