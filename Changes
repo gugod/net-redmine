@@ -1,5 +1,6 @@
 0.04:
   - Implement ticket deletion
+  - Implement ticket refresh method
 
 0.03:
   - Implement ticket status changes

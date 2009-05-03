@@ -51,8 +51,10 @@ use Encode;
 sub load {
     my ($self, $id) = @_;
 
-    my $mech = $self->connection->get_issues_page($id)->mechanize;
-    my $html = $mech->content;
+    eval '$self->connection->get_issues_page($id)';
+    return if $@;
+
+    my $html = $self->connection->mechanize->content;
 
     # my $html = io("/tmp/issue.html")->utf8->all;
 
@@ -106,7 +108,10 @@ sub destroy {
     die "Cannot delete the ticket without id.\n" unless $self->id;
 
     my $id = $self->id;
-    my $mech = $self->connection->get_issues_page($id)->mechanize;
+
+    $self->connection->get_issues_page($id);
+    
+    my $mech = $self->connection->mechanize;
     my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
 
     die "Cannot delete the ticket\n" unless $link;
