@@ -116,7 +116,13 @@ sub destroy {
 
     die "Cannot delete the ticket\n" unless $link;
 
-    $mech->post($link->url_abs());
+    my $html = $mech->content;
+    my $delete_form = "<form name='net_redmine_delete_issue' method=\"POST\" action=\"@{[ $link->url_abs ]}\"><input type='hidden' name='_method' value='post'></form>";
+    $html =~ s/<body>/<body>${delete_form}/;
+    $mech->update_html($html);
+
+    $mech->form_number(1);
+    $mech->submit;
 
     die "Failed to delete the ticket\n" unless $mech->response->is_success;
 
