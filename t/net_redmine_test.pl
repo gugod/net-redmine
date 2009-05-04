@@ -28,10 +28,12 @@ sub new_tickets {
     $g->sentences(1,1);
     $g->words(8,24);
 
+    my (undef, $filename, $line) = caller;
+
     return map {
         $r->create(
             ticket => {
-                subject => $g->generate,
+                subject => "$filename, line $line " . $g->generate,
                 description => $g->generate
             }
         );
