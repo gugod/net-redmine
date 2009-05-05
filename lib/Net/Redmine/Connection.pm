@@ -4,6 +4,7 @@ use Any::Moose;
 has url      => ( is => "rw", isa => "Str", required => 1 );
 has user     => ( is => "rw", isa => "Str", required => 1 );
 has password => ( is => "rw", isa => "Str", required => 1 );
+has directory => (is => "rw", isa => "Net::Redmine");
 
 has mechanize => (
     is => "rw",
