@@ -114,7 +114,7 @@ sub destroy {
     my $mech = $self->connection->mechanize;
     my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
 
-    die "Cannot delete the ticket\n" unless $link;
+    die "Your cannot delete the ticket $id.\n" unless $link;
 
     my $html = $mech->content;
     my $delete_form = "<form name='net_redmine_delete_issue' method=\"POST\" action=\"@{[ $link->url_abs ]}\"><input type='hidden' name='_method' value='post'></form>";
