@@ -13,19 +13,18 @@ note "Testing about Net::Redmine::Ticket class";
 my $subject = "Testing Net::Redmine $$ " . time;
 
 note "The newly created ticket id should looks sane";
-
-my $ticket = Net::Redmine::Ticket->new(connection => $r->connection);
-my $id = $ticket->create(
+my $ticket = Net::Redmine::Ticket->create(
+    connection => $r->connection,
     subject => $subject,
     description => "testing. testing. testing."
 );
-like $id, qr/^\d+$/;
-
+like $ticket->id, qr/^\d+$/;
 
 note "Loading ticket content.";
-
-my $ticket2 = Net::Redmine::Ticket->new(connection => $r->connection);
-$ticket2->load($id);
+my $ticket2 = Net::Redmine::Ticket->load(
+    connection => $r->connection,
+    id => $ticket->id
+);
 
 is($ticket2->id, $ticket->id);
 is($ticket2->subject, $ticket->subject);

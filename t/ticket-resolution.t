@@ -23,8 +23,7 @@ my $id;
 }
 
 {
-    my $t = Net::Redmine::Ticket->new(connection => $r->connection);
-    $t->load($id);
+    my $t = Net::Redmine::Ticket->load(connection => $r->connection, id => $id);
 
     is $t->status(), "Closed";
 }

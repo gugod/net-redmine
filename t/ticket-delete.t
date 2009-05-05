@@ -17,10 +17,13 @@ diag "Created 1 ticket, id = $id\n";
 
 $ticket->destroy;
 
-my $t2 = Net::Redmine::Ticket->new(connection => $r->connection);
+my $t2 = Net::Redmine::Ticket->load(
+    connection => $r->connection,
+    id => $id
+);
 
-if ($t2->load($id)) {
-    fail "Faeild to deleted the ticket"
+if ($t2) {
+    fail "Failed to deleted the ticket"
 }
 else {
     pass "cannot load it once the ticket is destroyed.";

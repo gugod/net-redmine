@@ -11,8 +11,7 @@ plan tests => 1;
 my ($ticket) = new_tickets($r, 1);
 my $id = $ticket->id;
 
-my $ticket2 = Net::Redmine::Ticket->new(connection => $r->connection);
-$ticket2->load($id);
+my $ticket2 = Net::Redmine::Ticket->load(connection => $r->connection, id => $id);
 
 $ticket->description("bleh bleh bleh");
 $ticket->save;

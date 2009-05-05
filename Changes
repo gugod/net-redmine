@@ -2,6 +2,7 @@
   - Implement ticket deletion
   - Implement ticket refresh method
   - Implement ticket search
+  - The ticket class methods are changed and it is incompatible with previous versions.
 
 0.03:
   - Implement ticket status changes
