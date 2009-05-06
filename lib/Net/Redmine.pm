@@ -58,13 +58,7 @@ sub lookup_ticket {
     my ($self, %args) = @_;
 
     if (my $id = $args{id}) {
-        my $live = $self->_live_ticket_objects;
-        return $live->{$id} if exists $live->{$id};
-
-        if (my $t =  Net::Redmine::Ticket->load(connection => $self->connection, id => $id)) {
-            $live->{$id} = $t;
-            return $t;
-        }
+        return Net::Redmine::Ticket->load(connection => $self->connection, id => $id);
     }
 }
 

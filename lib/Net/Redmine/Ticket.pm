@@ -48,8 +48,22 @@ sub load {
     die "should specify ticket id when loading it." unless defined $attr{id};
     die "should specify connection object when loading tickets." unless defined $attr{connection};
 
+    my $dir = $attr{connection}->directory;
+    if ($dir) {
+        my $live = $dir->_live_ticket_objects;
+        my $id = $attr{id};
+        return $live->{$id} if exists $live->{$id};
+    }
+
     my $self = $class->new(%attr);
-    return $self->refresh;
+    $self->refresh or return;
+
+    if ($dir) {
+        my $live = $dir->_live_ticket_objects;
+        $live->{$self->id} = $self;
+    }
+
+    return $self;
 }
 
 sub refresh {
@@ -122,6 +136,12 @@ sub destroy {
     die "Failed to delete the ticket\n" unless $mech->response->is_success;
 
     $self->id(-1);
+
+    if (my $dir = $self->connection->directory) {
+        my $live = $dir->_live_ticket_objects;
+        delete $live->{$id};
+    }
+
     return $self;
 }
 

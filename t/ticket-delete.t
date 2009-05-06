@@ -22,9 +22,4 @@ my $t2 = Net::Redmine::Ticket->load(
     id => $id
 );
 
-if ($t2) {
-    fail "Failed to deleted the ticket"
-}
-else {
-    pass "cannot load it once the ticket is destroyed.";
-}
+is($t2, undef, "loading a deleted ticket should return undef.");
