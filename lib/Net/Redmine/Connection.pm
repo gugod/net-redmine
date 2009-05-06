@@ -6,6 +6,13 @@ has user     => ( is => "rw", isa => "Str", required => 1 );
 has password => ( is => "rw", isa => "Str", required => 1 );
 has directory => (is => "rw", isa => "Net::Redmine");
 
+has _live_ticket_objects => (
+    is => "rw",
+    isa => "HashRef",
+    default => sub { {} }
+);
+
+
 has mechanize => (
     is => "rw",
     isa => "WWW::Mechanize",

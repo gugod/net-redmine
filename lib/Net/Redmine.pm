@@ -10,12 +10,6 @@ has connection => (
     required => 1
 );
 
-has _live_ticket_objects => (
-    is => "rw",
-    isa => "HashRef",
-    default => sub { {} }
-);
-
 sub BUILDARGS {
     my $class = shift;
     my %args = @_;
