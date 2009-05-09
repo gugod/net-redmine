@@ -1,6 +1,7 @@
 0.05:
   - Implement ticket identity mapping in Ticket class now.
   - Loading the same ticket id multiple times with the same connection object should return identical objects.
+  - fix memory leaking of ticket objects.
 
 0.04:
   - Implement ticket deletion
