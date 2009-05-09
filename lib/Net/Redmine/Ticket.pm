@@ -4,7 +4,8 @@ use Any::Moose;
 has connection => (
     is => "rw",
     isa => "Net::Redmine::Connection",
-    required => 1
+    required => 1,
+    weak_ref => 1,
 );
 
 has id          => (is => "rw", isa => "Int");

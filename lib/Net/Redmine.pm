@@ -23,11 +23,6 @@ sub BUILDARGS {
     return $class->SUPER::BUILDARGS(%args);
 }
 
-sub BUILD {
-    my $self = shift;
-    $self->connection->directory($self);
-}
-
 sub create {
     my ($self, %args) = @_;
     return $self->create_ticket(%$_) if $_ = $args{ticket};
