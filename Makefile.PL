@@ -9,6 +9,7 @@ requires
     "HTML::WikiConverter::Markdown" => "0.05",
     "IO::All"                       => "0.39",
     "WWW::Mechanize"                => "1.52",
+    "Scalar::Defer"                 => "0.18",
     "pQuery"                        => "0.07";
 
 build_requires
@@ -25,4 +26,3 @@ author_tests 'xt';
 auto_include;
 # auto_license;
 WriteAll;
-

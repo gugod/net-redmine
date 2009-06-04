@@ -1,6 +1,8 @@
 package Net::Redmine::Search;
 use Any::Moose;
 use pQuery;
+use Scalar::Defer;
+use Net::Redmine::Ticket;
 
 has connection => (
     is => "rw",
@@ -21,14 +23,18 @@ sub results {
     die "Failed on search page" unless $mech->response->is_success;
 
     my @r = ();
-    pQuery($mech->content)->find("#search-results .issue a")->each(
-        sub {
-            my $issue_url = $_->getAttribute("href") or return;
-            if (my ($issue_id) = $issue_url =~ m[/issues/(\d+)$]) {
-                push @r, Net::Redmine::Ticket->new(connection => $self->connection, id => $issue_id);
+
+    do {
+        pQuery($mech->content)->find("#search-results .issue a")->each(
+            sub {
+                my $issue_url = $_->getAttribute("href") or return;
+                if (my ($issue_id) = $issue_url =~ m[/issues/(\d+)$]) {
+                    push @r, lazy { Net::Redmine::Ticket->load(connection => $self->connection, id => $issue_id) }
+                }
             }
-        }
-    );
+        );
+    } while($mech->follow_link(text_regex => qr/Next/));
+
     return wantarray ? @r : \@r;
 }
 

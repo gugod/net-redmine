@@ -10,8 +10,11 @@ my $r = new_net_redmine();
 
 plan tests => 1;
 
-### Prepare new tickets
-my @tickets = new_tickets($r, 2);
+### Prepare new tickets. The default page size is 15. The number of
+### tickets created here should be larger then that in order to prove
+### that it crawls all pages of search results.
+
+my @tickets = new_tickets($r, 50);
 
 my $search = Net::Redmine::Search->new(
     connection => $r->connection,
