@@ -3,6 +3,7 @@ use Any::Moose;
 our $VERSION = '0.05';
 use Net::Redmine::Connection;
 use Net::Redmine::Ticket;
+use Net::Redmine::Search;
 
 has connection => (
     is => "ro",
@@ -49,6 +50,17 @@ sub lookup_ticket {
     if (my $id = $args{id}) {
         return Net::Redmine::Ticket->load(connection => $self->connection, id => $id);
     }
+}
+
+sub search_ticket {
+    my ($self, $query) = @_;
+
+    my $search = Net::Redmine::Search->new(
+        connection => $self->connection,
+        type => ['ticket'],
+        query => $query
+    );
+    return $search;
 }
 
 1;

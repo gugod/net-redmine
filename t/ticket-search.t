@@ -14,15 +14,9 @@ plan tests => 1;
 ### tickets created here should be larger then that in order to prove
 ### that it crawls all pages of search results.
 
-my @tickets = new_tickets($r, 50);
+my @tickets = new_tickets($r, 20);
 
-my $search = Net::Redmine::Search->new(
-    connection => $r->connection,
-    type => ['ticket'],
-    query => __FILE__
-);
-
-my @found = $search->results;
+my @found = $r->search_ticket(__FILE__)->results;
 
 ok( all( map { $_->id } @tickets ) == any(map { $_-> id } @found), "All the newly created issues can be found in the search result." );
 
