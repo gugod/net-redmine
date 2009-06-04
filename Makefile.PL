@@ -9,7 +9,8 @@ requires
     "HTML::WikiConverter::Markdown" => "0.05",
     "IO::All"                       => "0.39",
     "WWW::Mechanize"                => "1.52",
-    "Scalar::Defer"                 => "0.18",
+    "Text::CSV::Slurp"              => "0.5",
+    "IO::String"                    => "1.08",
     "pQuery"                        => "0.07";
 
 build_requires

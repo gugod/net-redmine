@@ -113,7 +113,7 @@ sub destroy {
     my $id = $self->id;
 
     $self->connection->get_issues_page($id);
-    
+
     my $mech = $self->connection->mechanize;
     my $link = $mech->find_link(url_regex => qr[/issues/${id}/destroy$]);
 
