@@ -14,6 +14,7 @@ requires
     "pQuery"                        => "0.07";
 
 build_requires
+    "Test::Cukes"             => "0.02",
     "Test::Memory::Cycle"     => "1.04",
     "Text::Greeking"          => "0.11",
     "Quantum::Superpositions" => "1.03",
