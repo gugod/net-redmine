@@ -21,7 +21,7 @@ use WWW::Mechanize;
 
 sub _build_mechanize {
     my ($self) = @_;
-    my $mech = WWW::Mechanize->new;
+    my $mech = WWW::Mechanize->new(autocheck => 0);
     return $mech;
 }
 
@@ -104,4 +104,3 @@ Net::Redmine::Connection
 
 
 =cut
-
