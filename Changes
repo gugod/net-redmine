@@ -1,3 +1,6 @@
+0.06:
+  - Improve search function.
+
 0.05:
   - Implement ticket identity mapping in Ticket class now.
   - Loading the same ticket id multiple times with the same connection object should return identical objects.
