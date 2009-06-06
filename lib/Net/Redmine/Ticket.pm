@@ -1,5 +1,6 @@
 package Net::Redmine::Ticket;
 use Any::Moose;
+use Net::Redmine::TicketHistory;
 
 has connection => (
     is => "rw",
