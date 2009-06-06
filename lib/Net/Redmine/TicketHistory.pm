@@ -1,5 +1,6 @@
 package Net::Redmine::TicketHistory;
 use Any::Moose;
+use DateTime::Format::DateParse;
 
 has connection => (
     is => "rw",
@@ -9,6 +10,7 @@ has connection => (
 
 has id               => (is => "rw", isa => "Int", required => 1);
 has ticket_id        => (is => "rw", isa => "Int", required => 1);
+has date             => (is => "rw", isa => "DateTime", lazy_build => 1);
 has note             => (is => "rw", isa => "Str", lazy_build => 1);
 has property_changes => (is => "rw", isa => "HashRef", lazy_build => 1);
 
@@ -57,6 +59,13 @@ sub _build_note {
     my $note_text = $wc->html2wiki( Encode::encode_utf8($note_html) );
 
     return $note_text;
+}
+
+sub _build_date {
+    my ($self) = @_;
+    my $p = pQuery($self->_ticket_page_html);
+    my $date_str = $p->find(".journal")->eq($self->id - 1)->find("a")->get(3)->attr("title");
+    return DateTime::Format::DateParse->parse_datetime($date_str);
 }
 
 __PACKAGE__->meta->make_immutable;
