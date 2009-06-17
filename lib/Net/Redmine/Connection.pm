@@ -56,7 +56,7 @@ sub get_issues_page {
     if ($id) {
         $mech->submit_form(form_number => 1, fields => { q => "#" . $id });
         die "Failed to get the ticket(id = $id)\n" unless $mech->response->is_success;
-        die "No such ticket\n" unless $mech->uri =~ m[/issues/${id}$];
+        die "No such ticket\n" unless $mech->uri =~ m[/issues/(?:show/)?${id}$];
     }
     else {
         $mech->follow_link( url_regex => qr[/issues$] );

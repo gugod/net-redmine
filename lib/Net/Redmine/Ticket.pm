@@ -67,7 +67,7 @@ sub refresh {
 
     my $id = $self->id;
     eval '$self->connection->get_issues_page($id)';
-    return if $@;
+    if ($@) { warn $@; return }
 
     my $p = pQuery($self->connection->mechanize->content);
     my $wc = new HTML::WikiConverter( dialect => 'Markdown' );
