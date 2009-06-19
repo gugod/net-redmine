@@ -32,44 +32,49 @@ sub _build__ticket_page_html {
 }
 
 sub _build_property_changes {
-    my ($self) = @_;
+    my ($self)           = @_;
     my $property_changes = {};
-    my $p = pQuery($self->_ticket_page_html);
 
-    if ($self->id == 0) {
-        $p->find(".journal")->each(
-            sub {
-                my ($journal) = pQuery($_);
+    my $find_property_changes = sub {
+        my ($cb) = @_;
+        return sub {
+            pQuery($_)->find("ul:eq(0) li")->each(
+                sub {
+                    my $li   = pQuery($_);
+                    my $name = lc( $li->find("strong")->text );
+                    my $from = $li->find("i")->eq(0)->text;
+                    my $to   = $li->find("i")->eq(1)->text;
 
-                pQuery($journal)->find("ul:eq(0) li")->each(
-                    sub {
-                        my $li = pQuery($_);
-                        my $name = lc( $li->find("strong")->text );
-                        my $from = $li->find("i")->eq(0)->text;
-                        my $to   = $li->find("i")->eq(1)->text;
-
-
-                        $property_changes->{$name} = { from => "",  to => $from }
-                            unless exists $property_changes->{$name};
-                    }
-                );
-            }
-        );
-
-        return $property_changes;
-    }
-
-    $p->find(".journal")->eq($self->id - 1)->find("ul:eq(0) li")->each(
-        sub {
-            my $li = pQuery($_);
-
-            my $name = lc( $li->find("strong")->text );
-            my $from = $li->find("i")->eq(0)->text;
-            my $to   = $li->find("i")->eq(1)->text;
-
-            $property_changes->{$name} = {from => $from, to => $to};
+                    $cb->( $name, $from, $to );
+                }
+            )
         }
-    );
+    };
+
+    my $p = pQuery( $self->_ticket_page_html );
+    my $journals = $p->find(".journal");
+
+    if ( $self->id == 0 ) {
+        $journals->each(
+            $find_property_changes->(
+                sub {
+                    my ( $name, $from, $to ) = @_;
+                    $property_changes->{$name} = { from => "", to => $from }
+                        unless exists $property_changes->{$name};
+                }
+            )
+        );
+    }
+    else {
+        $journals->eq( $self->id - 1 )->each(
+            $find_property_changes->(
+                sub {
+                    my ( $name, $from, $to ) = @_;
+                    $property_changes->{$name} = { from => $from, to => $to };
+                }
+            )
+        );
+    }
 
     return $property_changes;
 }
