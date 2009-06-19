@@ -1,6 +1,7 @@
 package Net::Redmine::TicketHistory;
 use Any::Moose;
 use DateTime::Format::DateParse;
+use Net::Redmine::Ticket;
 
 has connection => (
     is => "rw",
@@ -16,6 +17,12 @@ has property_changes => (is => "rw", isa => "HashRef", lazy_build => 1);
 
 has _ticket_page_html => (is => "rw", isa => "Str", lazy_build => 1);
 
+has ticket => (
+    is => "ro",
+    isa => "Net::Redmine::Ticket",
+    lazy_build => 1
+);
+
 use pQuery;
 
 sub _build__ticket_page_html {
@@ -26,9 +33,31 @@ sub _build__ticket_page_html {
 
 sub _build_property_changes {
     my ($self) = @_;
+    my $property_changes = {};
     my $p = pQuery($self->_ticket_page_html);
 
-    my $property_changes = {};
+    if ($self->id == 0) {
+        $p->find(".journal")->each(
+            sub {
+                my ($journal) = pQuery($_);
+
+                pQuery($journal)->find("ul:eq(0) li")->each(
+                    sub {
+                        my $li = pQuery($_);
+                        my $name = lc( $li->find("strong")->text );
+                        my $from = $li->find("i")->eq(0)->text;
+                        my $to   = $li->find("i")->eq(1)->text;
+
+
+                        $property_changes->{$name} = { from => "",  to => $from }
+                            unless exists $property_changes->{$name};
+                    }
+                );
+            }
+        );
+
+        return $property_changes;
+    }
 
     $p->find(".journal")->eq($self->id - 1)->find("ul:eq(0) li")->each(
         sub {
@@ -45,24 +74,36 @@ sub _build_property_changes {
     return $property_changes;
 }
 
+sub _build_ticket {
+    my ($self) = @_;
+    return Net::Redmine::Ticket->load(id => $self->ticket_id, connection => $self->connection);
+}
+
 use HTML::WikiConverter;
 use Encode;
 
 sub _build_note {
     my ($self) = @_;
 
+    if ($self->id == 0) {
+        return "";
+    }
+
     my $p = pQuery($self->_ticket_page_html);
-
     my $note_html = $p->find(".journal")->eq($self->id - 1)->find(".wiki")->html;
-
     my $wc = HTML::WikiConverter->new(dialect => "Markdown");
     my $note_text = $wc->html2wiki( Encode::encode_utf8($note_html) );
-
     return $note_text;
 }
 
 sub _build_date {
     my ($self) = @_;
+
+    if ($self->id == 0) {
+        # TODO: get the real ticket creation date
+        return DateTime::Format::DateParse->parse_datetime("1970/01/01 00:00:01");
+    }
+
     my $p = pQuery($self->_ticket_page_html);
     my $date_str = $p->find(".journal")->eq($self->id - 1)->find("a")->get(3)->attr("title");
     return DateTime::Format::DateParse->parse_datetime($date_str);

@@ -154,7 +154,7 @@ sub _build_histories {
                 id => $_,
                 ticket_id => $self->id
             )
-        } (1..$n)
+        } (0..$n)
     ];
 }
 
