@@ -37,26 +37,23 @@ sub get_login_page {
     return $self;
 }
 
+sub assert_login {
+    my $self = shift;
+    my $mech = $self->get_login_page->mechanize;
+    $mech->submit_form(
+        form_number => 2,
+        fields => {
+            username => $self->user,
+            password => $self->password
+        }
+    );
+}
+
 sub get_project_overview {
     my ($self) = @_;
-    my $mech = $self->mechanize;
+    $self->assert_login;
 
-    $mech->get( $self->url );
-
-    if ($mech->uri =~ /\/login/) {
-        $mech->submit_form(
-            form_number => 2,
-            fields => {
-                username => $self->user,
-                password => $self->password
-            }
-        );
-
-        if ($mech->uri ne $self->url) {
-            $mech->get($self->url);
-        }
-    }
-
+    $self->mechanize->get( $self->url );
     return $self;
 }
 

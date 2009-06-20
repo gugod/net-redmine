@@ -15,8 +15,8 @@ Given qr/an redmine object/ => sub {
     assert $c->isa("Net::Redmine::Connection");
 };
 
-When qr/invoke the "get_login_page" method/ => sub {
-    $c->get_login_page;
+When qr/invoke the "(.*)" method/ => sub {
+    $c->$1;
 };
 
 Then qr/it should be on the login page/ => sub {
@@ -25,6 +25,12 @@ Then qr/it should be on the login page/ => sub {
 
     assert $uri->path eq "/login";
     assert $content =~ /id="login-form"/;
+};
+
+Then qr/it should be signed in/ => sub {
+    $c->get_project_overview;
+    my $link = $c->mechanize->find_link( url_regex => qr[/my/page] );
+    assert $link;
 };
 
 $/ = undef;
@@ -39,3 +45,8 @@ Feature: Net::Redmine::Connection class
     Given an redmine object
     When invoke the "get_login_page" method
     Then it should be on the login page
+
+  Scenario: test the assert_login method
+    Given an redmine object
+    When invoke the "assert_login" method
+    Then it should be signed in
