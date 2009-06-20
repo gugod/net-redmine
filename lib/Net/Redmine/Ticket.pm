@@ -2,6 +2,8 @@ package Net::Redmine::Ticket;
 use Any::Moose;
 use Net::Redmine::TicketHistory;
 
+use DateTimeX::Easy;
+
 has connection => (
     is => "rw",
     isa => "Net::Redmine::Connection",
@@ -14,7 +16,8 @@ has subject     => (is => "rw", isa => "Str");
 has description => (is => "rw", isa => "Str");
 has status      => (is => "rw", isa => "Str");
 has priority    => (is => "rw", isa => "Str");
-
+has author      => (is => "rw", isa => "Str");
+has created_at  => (is => "rw", isa => "DateTime");
 has note        => (is => "rw", isa => "Str");
 has histories   => (is => "rw", isa => "ArrayRef", lazy_build => 1);
 
@@ -78,6 +81,9 @@ sub refresh {
     $self->subject($subject);
     $self->description($description);
     $self->status($status);
+
+    $self->author($p->find(".issue .author a")->eq(0)->text);
+    $self->created_at(DateTimeX::Easy->new( $p->find(".issue .author a")->get(1)->getAttribute("title") ));
 
     return $self;
 }
