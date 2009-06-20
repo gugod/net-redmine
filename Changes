@@ -2,6 +2,7 @@
   - Crawl 'date' of ticket histories.
   - improve the way handling login
   - let the 0th history entries means the "creation of this ticket"
+  - ticket creation time is now loaded
 
 0.06:
   - Improve search function.
