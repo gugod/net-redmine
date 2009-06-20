@@ -11,9 +11,11 @@ my $page_html;
     $page_html = <DATA>;
 }
 
+no warnings 'redefine';
 *Net::Redmine::TicketHistory::_build__ticket_page_html = sub {
     return $page_html;
 };
+use warnings;
 
 my $conn = Net::Redmine::Connection->new(
     url => 'http://example.com',
