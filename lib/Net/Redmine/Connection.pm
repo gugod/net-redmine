@@ -1,5 +1,6 @@
 package Net::Redmine::Connection;
 use Any::Moose;
+use URI;
 
 has url      => ( is => "rw", isa => "Str", required => 1 );
 has user     => ( is => "rw", isa => "Str", required => 1 );
@@ -23,6 +24,17 @@ sub _build_mechanize {
     my ($self) = @_;
     my $mech = WWW::Mechanize->new(autocheck => 0);
     return $mech;
+}
+
+sub get_login_page {
+    my $self= shift;
+
+    my $uri = URI->new($self->url);
+    $uri->path("/login");
+
+    $self->mechanize->get( $uri->as_string );
+
+    return $self;
 }
 
 sub get_project_overview {
