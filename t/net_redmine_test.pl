@@ -1,3 +1,5 @@
+use Test::More;
+
 unless ($_ = $ENV{NET_REDMINE_TEST}) {
     plan skip_all => "Need NET_REDMINE_TEST env var";
     exit;

@@ -1,6 +1,7 @@
 package Net::Redmine::Connection;
 use Any::Moose;
 use URI;
+use Params::Validate;
 
 has url      => ( is => "rw", isa => "Str", required => 1 );
 has user     => ( is => "rw", isa => "Str", required => 1 );
@@ -82,6 +83,20 @@ sub get_new_issue_page {
     $mech->follow_link( url_regex => qr[/issues/new$] );
 
     die "Failed to get the 'New Issue' page\n" unless $mech->response->is_success;
+
+    return $self;
+}
+
+sub get_user_page {
+    my $self = shift;
+    validate(@_, { id => 1 });
+
+    my %args = @_;
+    my $mech = $self->mechanize;
+
+    my $uri = URI->new($mech->uri);
+    $uri->path("/account/show/$args{id}");
+    $mech->get($uri->as_string);
 
     return $self;
 }
