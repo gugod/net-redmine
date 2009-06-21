@@ -13,13 +13,8 @@ my $r = new_net_redmine();
 my ($ticket) = new_tickets($r, 1);
 my $id = $ticket->id;
 
-diag "Created 1 ticket, id = $id\n";
-
 $ticket->destroy;
 
-my $t2 = Net::Redmine::Ticket->load(
-    connection => $r->connection,
-    id => $id
-);
+my $t2 = Net::Redmine::Ticket->load(connection => $r->connection, id => $id);
 
 is($t2, undef, "loading a deleted ticket should return undef.");

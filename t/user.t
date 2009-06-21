@@ -1,7 +1,6 @@
 #!/usr/bin/env perl -w
 use strict;
 use Test::Cukes;
-use Test::More;
 use Regexp::Common;
 use Regexp::Common::Email::Address;
 

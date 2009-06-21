@@ -5,23 +5,12 @@ use Quantum::Superpositions;
 use Net::Redmine;
 use Net::Redmine::Search;
 
-use Test::More;
 require 't/net_redmine_test.pl';
 my $r = new_net_redmine();
 my $search;
 my @tickets;
 
-my $n = 50;
-
-feature(<<FEATURE);
-Feature: Search with null query value
-  A special case for search
-
-  Scenario: Search with null query value
-    Given that there are $n tickets in the system
-    When searching with null query value
-    Then all tickets should be found.
-FEATURE
+my $n = int(rand(10)) + 3;
 
 Given qr/^that there are $n tickets in the system$/, sub {
     @tickets = new_tickets($r, $n);
@@ -47,4 +36,12 @@ Then qr/^all tickets should be found\.$/, sub {
     $_->destroy for @tickets;
 };
 
-runtests;
+runtests <<FEATURE;
+Feature: Search with null query value
+  A special case for search
+
+  Scenario: Search with null query value
+    Given that there are $n tickets in the system
+    When searching with null query value
+    Then all tickets should be found.
+FEATURE

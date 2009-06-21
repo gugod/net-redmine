@@ -1,6 +1,5 @@
 #!/usr/bin/env perl -w
 use strict;
-use Test::More;
 use Test::Cukes;
 use Net::Redmine;
 use URI;
