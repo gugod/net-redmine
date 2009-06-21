@@ -44,8 +44,6 @@ sub results {
     return wantarray ? @r : \@r;
 }
 
-use IO::All;
-
 sub all_tickets {
     my ($self) = @_;
     my $mech = $self->connection->get_issues_page->mechanize;

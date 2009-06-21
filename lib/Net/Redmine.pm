@@ -4,6 +4,7 @@ our $VERSION = '0.07';
 use Net::Redmine::Connection;
 use Net::Redmine::Ticket;
 use Net::Redmine::Search;
+use Net::Redmine::User;
 
 has connection => (
     is => "ro",
@@ -32,6 +33,7 @@ sub create {
 sub lookup {
     my ($self, %args) = @_;
     return $self->lookup_ticket(%$_) if $_ = $args{ticket};
+    return $self->lookup_user(%$_) if $_ = $args{user};
 }
 
 sub create_ticket {
@@ -61,6 +63,13 @@ sub search_ticket {
         query => $query
     );
     return $search;
+}
+
+sub lookup_user {
+    my ($self, %args) = @_;
+    if (my $id = $args{id}) {
+        return Net::Redmine::User->load(connection => $self->connection, id => $id);
+    }
 }
 
 1;

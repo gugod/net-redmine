@@ -1,7 +1,7 @@
 package Net::Redmine::Ticket;
 use Any::Moose;
 use Net::Redmine::TicketHistory;
-
+use Net::Redmine::User;
 use DateTimeX::Easy;
 
 has connection => (
@@ -16,7 +16,7 @@ has subject     => (is => "rw", isa => "Str");
 has description => (is => "rw", isa => "Str");
 has status      => (is => "rw", isa => "Str");
 has priority    => (is => "rw", isa => "Str");
-has author      => (is => "rw", isa => "Str");
+has author      => (is => "rw", isa => "Maybe[Net::Redmine::User]");
 has created_at  => (is => "rw", isa => "DateTime");
 has note        => (is => "rw", isa => "Str");
 has histories   => (is => "rw", isa => "ArrayRef", lazy_build => 1);
@@ -82,8 +82,12 @@ sub refresh {
     $self->description($description);
     $self->status($status);
 
-    $self->author($p->find(".issue .author a")->eq(0)->text);
     $self->created_at(DateTimeX::Easy->new( $p->find(".issue .author a")->get(1)->getAttribute("title") ));
+
+    my $author_page_uri = $p->find(".issue .author a")->get(0)->getAttribute("href");
+    if ($author_page_uri =~ m[/account/show/(\d+)$]) {
+        $self->author(Net::Redmine::User->load(id => $1, connection => $self->connection));
+    }
 
     return $self;
 }

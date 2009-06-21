@@ -14,6 +14,7 @@ requires
     "Params::Validate"              => "0.91",
     "Text::CSV::Slurp"              => "0.5",
     "URI"                           => "1.38",
+    "URI::Escape"                   => "3.29",
     "WWW::Mechanize"                => "1.52",
     "pQuery"                        => "0.07";
 

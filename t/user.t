@@ -1,7 +1,10 @@
 #!/usr/bin/env perl -w
 use strict;
 use Test::Cukes;
+use Test::More;
 use Regexp::Common;
+use Regexp::Common::Email::Address;
+
 use Net::Redmine;
 require 't/net_redmine_test.pl';
 
@@ -21,7 +24,7 @@ When qr/the user info is crawled/ => sub {
 };
 
 Then qr/his email should be known/ => sub {
-    assert $user->email =~ m/$RE{Email}{Address}/;
+    assert $user->email =~ m/^$RE{Email}{Address}$/;
 };
 
 local $/ = undef;
