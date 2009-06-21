@@ -1,3 +1,6 @@
+0.08:
+  - load ticket author as an Net::Redmine::User object
+
 0.07:
   - Crawl 'date' of ticket histories.
   - improve the way handling login
