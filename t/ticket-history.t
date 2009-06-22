@@ -2,11 +2,13 @@
 use strict;
 use Test::More;
 use Net::Redmine;
+use Regexp::Common;
+use Regexp::Common::Email::Address;
 
 require 't/net_redmine_test.pl';
 my $r = new_net_redmine();
 
-plan tests => 11;
+plan tests => 17;
 
 ### Prepare a new ticket with multiple histories
 my $t = $r->create(
@@ -23,7 +25,7 @@ $t->subject( $t->subject . " 3" );
 $t->note("it is good. " . time);
 $t->save;
 
-diag "Created a new ticket, id = " . $t->id;
+# diag "Created a new ticket, id = " . $t->id;
 
 ### Examine its histories
 
@@ -47,6 +49,8 @@ use Net::Redmine::TicketHistory;
             to => __FILE__ . " 1",
         }
     );
+
+    like $h->author->email, qr/^$RE{Email}{Address}$/;
 }
 
 {
@@ -66,6 +70,8 @@ use Net::Redmine::TicketHistory;
             to => __FILE__ . " 1 2",
         }
     );
+
+    like $h->author->email, qr/^$RE{Email}{Address}$/;
 }
 
 {
@@ -87,11 +93,20 @@ use Net::Redmine::TicketHistory;
             to => __FILE__ . " 1 2 3",
         }
     );
+
+    like $h->author->email, qr/^$RE{Email}{Address}$/;
 }
 
 {
     my $histories = $t->histories;
     is(0+@$histories, 3, "This ticket has three history entires");
+
+    foreach my $h (@$histories) {
+        like($h->author->email, qr/^$RE{Email}{Address}$/, "examine ticket author email");
+    }
+
+    # require YAML;
+    # die YAML::Dump($histories->[0]);
 
     is_deeply(
         $histories->[0]->property_changes->{subject},

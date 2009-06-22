@@ -2,6 +2,8 @@ package Net::Redmine::TicketHistory;
 use Any::Moose;
 use DateTime::Format::DateParse;
 use Net::Redmine::Ticket;
+use Net::Redmine::User;
+use URI;
 
 has connection => (
     is => "rw",
@@ -14,6 +16,7 @@ has ticket_id        => (is => "rw", isa => "Int", required => 1);
 has date             => (is => "rw", isa => "DateTime", lazy_build => 1);
 has note             => (is => "rw", isa => "Str", lazy_build => 1);
 has property_changes => (is => "rw", isa => "HashRef", lazy_build => 1);
+has author           => (is => "ro", isa => "Maybe[Net::Redmine::User]", lazy_build => 1);
 
 has _ticket_page_html => (is => "rw", isa => "Str", lazy_build => 1);
 
@@ -27,8 +30,7 @@ use pQuery;
 
 sub _build__ticket_page_html {
     my ($self) = @_;
-    my $mech = $self->connection->get_issues_page($self->ticket_id)->mechanize;
-    return $mech->content;
+    return $self->connection->get_issues_page($self->ticket_id)->mechanize->content;
 }
 
 sub _build_property_changes {
@@ -112,6 +114,15 @@ sub _build_date {
     my $p = pQuery($self->_ticket_page_html);
     my $date_str = $p->find(".journal")->eq($self->id - 1)->find("a")->get(3)->attr("title");
     return DateTime::Format::DateParse->parse_datetime($date_str);
+}
+
+sub _build_author {
+    my $self = shift;
+    my $p = pQuery($self->_ticket_page_html);
+    my $user_uri = URI->new($p->find(".journal")->eq($self->id - 1)->find("a")->get(2)->getAttribute("href"));
+    if ($user_uri->path =~ m{/account/show/(\d+)$}) {
+        return Net::Redmine::User->load(id => $1, connection => $self->connection);
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
