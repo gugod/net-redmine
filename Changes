@@ -1,3 +1,6 @@
+0.09:
+  - load the authors of ticket histories
+
 0.08:
   - load ticket author as an Net::Redmine::User object
 
