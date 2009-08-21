@@ -30,6 +30,19 @@ sub create {
     return $self->create_ticket(%$_) if $_ = $args{ticket};
 }
 
+sub copy {
+    my ( $self, %args ) = @_;
+    my $orig = $self->lookup_ticket(%$_) if $_ = $args{ticket};
+    delete $args{ticket}{id};
+    my @list = $orig->meta->get_attribute_list;
+    foreach my $attr (@list) {
+        next if ( $attr =~ /^(id|connection)$/ );
+        next if ( exists $args{ticket}{$attr} );
+        $args{ticket}{$attr} = $orig->$attr if defined $orig->$attr;
+    }
+    return $self->create_ticket(%$_) if $_ = $args{ticket};
+}
+
 sub lookup {
     my ($self, %args) = @_;
     return $self->lookup_ticket(%$_) if $_ = $args{ticket};
@@ -104,6 +117,15 @@ Net::Redmine - A mechanized-based programming API against redmine server.
       }
   );
 
+  # copy a ticket
+  my $t3 = $r->copy (
+      ticket => {
+          id => 42,  # id of the original ticket we want to copy
+          subject => "new subject",
+          description => "a description",
+      }
+  );
+
 =head1 DESCRIPTION
 
 Net::Redmine is an mechanized-based programming API against redmine server.
@@ -143,6 +165,12 @@ contain C<subject> and <description> of the ticket. For example:
 
 The returned value of this method is a C<Net::Redmine::Ticket> object.
 Also read the document of that class to see how to use it.
+
+=item copy( ticket => {id => Integer, ... } }
+
+The C<copy> instance method can copy an existing ticket. The id is the id
+of the original ticket we want to copy. The other values to the C<ticket>
+key is the same hasref as for C<create>.
 
 =item lookup( ticket => { id => Integer } }
 
