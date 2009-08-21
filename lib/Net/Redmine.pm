@@ -92,8 +92,8 @@ Net::Redmine - A mechanized-based programming API against redmine server.
   # Create a new ticket
   my $t1 = $r->create(
       ticket => {
-          subject => "bug in the bag!"
-          description => "please eliminate the bug for me".
+          subject => "bug in the bag!",
+          description => "please eliminate the bug for me",
       }
   );
 
