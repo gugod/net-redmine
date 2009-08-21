@@ -41,13 +41,16 @@ sub get_login_page {
 sub assert_login {
     my $self = shift;
     my $mech = $self->get_login_page->mechanize;
-    $mech->submit_form(
+    my $res  = $mech->submit_form(
         form_number => 2,
-        fields => {
+        fields      => {
             username => $self->user,
             password => $self->password
         }
     );
+    if ( $res->content =~ /<div class="flash error">/ ) {
+        die "Can't login, invalid login or password !";
+    }
 }
 
 sub get_project_overview {
