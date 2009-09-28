@@ -16,8 +16,8 @@ requires
     "URI"                           => "1.38",
     "URI::Escape"                   => "3.29",
     "WWW::Mechanize"                => "1.52",
-    "Regex::Common"                 => "2.122",
-    "Regex::Common::Email::Address" => "1.01",
+    "Regexp::Common"                 => "2.122",
+    "Regexp::Common::Email::Address" => "1.01",
     "pQuery"                        => "0.07";
 
 build_requires
