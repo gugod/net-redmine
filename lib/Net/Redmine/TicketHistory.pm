@@ -98,9 +98,12 @@ sub _build_note {
 
     my $p = pQuery($self->_ticket_page_html);
     my $note_html = $p->find(".journal")->eq($self->id - 1)->find(".wiki")->html;
-    my $wc = HTML::WikiConverter->new(dialect => "Markdown");
-    my $note_text = $wc->html2wiki( Encode::encode_utf8($note_html) );
-    return $note_text;
+    if ($note_html) {
+        my $converter = HTML::WikiConverter->new(dialect => "Markdown");
+        my $note_text = $converter->html2wiki( Encode::encode_utf8($note_html) );
+        return $note_text;
+    }
+    return "";
 }
 
 sub _build_date {
