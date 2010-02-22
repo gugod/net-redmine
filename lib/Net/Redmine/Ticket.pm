@@ -85,7 +85,7 @@ sub refresh {
     $self->created_at(DateTimeX::Easy->new( $p->find(".issue .author a")->get(1)->getAttribute("title") ));
 
     my $author_page_uri = $p->find(".issue .author a")->get(0)->getAttribute("href");
-    if ($author_page_uri =~ m[/account/show/(\d+)$]) {
+    if ($author_page_uri =~ m[/(?:account/show|users)/(\d+)$]) {
         $self->author(Net::Redmine::User->load(id => $1, connection => $self->connection));
     }
 

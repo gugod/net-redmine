@@ -98,8 +98,18 @@ sub get_user_page {
     my $mech = $self->mechanize;
 
     my $uri = URI->new($mech->uri);
-    $uri->path("/account/show/$args{id}");
+
+    $uri->path("/users/$args{id}");
     $mech->get($uri->as_string);
+
+    unless ($mech->response->is_success) {
+        $uri->path("/account/show/$args{id}");
+        $mech->get($uri->as_string);
+
+        unless ($mech->response->is_success) {
+            die "Fail to guess user page on this redmine server.\n"
+        }
+    }
 
     return $self;
 }
