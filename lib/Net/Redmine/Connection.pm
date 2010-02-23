@@ -7,6 +7,8 @@ has url      => ( is => "rw", isa => "Str", required => 1 );
 has user     => ( is => "rw", isa => "Str", required => 1 );
 has password => ( is => "rw", isa => "Str", required => 1 );
 
+has is_logined => ( is => "rw", isa => "Int");
+
 has _live_ticket_objects => (
     is => "rw",
     isa => "HashRef",
@@ -40,6 +42,8 @@ sub get_login_page {
 
 sub assert_login {
     my $self = shift;
+    return if $self->is_logined;
+
     my $mech = $self->get_login_page->mechanize;
     my $res  = $mech->submit_form(
         form_number => 2,
@@ -51,6 +55,7 @@ sub assert_login {
     if ( $res->content =~ /<div class="flash error">/ ) {
         die "Can't login, invalid login or password !";
     }
+    $self->is_logined(1);
 }
 
 sub get_project_overview {
