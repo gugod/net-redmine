@@ -1,26 +1,46 @@
 use Test::More;
+use Cwd 'getcwd';
 
-unless ($_ = $ENV{NET_REDMINE_TEST}) {
-    plan skip_all => "Need NET_REDMINE_TEST env var";
+unless ($_ = $ENV{NET_REDMINE_RAILS_ROOT}) {
+    plan skip_all => "Need SD_REDMINE_RAILS_ROOT env var";
     exit;
 }
 
-sub net_redmine_test {
-    my ($server, $user, $password) = split / /,  $ENV{NET_REDMINE_TEST};
+my $REDMINE_RAILS_ROOT = $ENV{NET_REDMINE_RAILS_ROOT};
+my $REDMINE_SERVER_PID = undef;
 
-    unless ($server && $user && $password) {
-        plan skip_all => "No server and/or login credentials.";
-        exit;
-    }
-    return ($server, $user, $password);
+END {
+    system "kill -9 $REDMINE_SERVER_PID" if $REDMINE_SERVER_PID
+}
+
+sub net_redmine_test {
+    return ("http://localhost:3000", "admin", "admin");
 }
 
 sub new_net_redmine {
+    system "kill -9 $REDMINE_SERVER_PID" if $REDMINE_SERVER_PID;
+    $REDMINE_SERVER_PID = undef;
+
+    {
+        my $cwd = getcwd;
+
+        chdir $REDMINE_RAILS_ROOT;
+        system q[echo en | rake log:clear db:drop db:create db:migrate redmine:load_default_data];
+        system q[script/runner 'p = Project.create(:name => "test", :identifier => "test", :is_public => false); p.enabled_module_names = ["issue_tracking"]; p.set_parent!(nil); p.save'];
+        system q[script/server -d];
+        sleep 3;
+
+        $REDMINE_SERVER_PID = `cat tmp/pids/server.pid`;
+        print STDERR "Redmine Server started. PID ${REDMINE_SERVER_PID}\n";
+        chdir $cwd;
+    }
+
     my ($server, $user, $password) = net_redmine_test();
     return Net::Redmine->new(url => $server,user => $user, password => $password);
 }
 
 use Text::Greeking;
+
 sub new_tickets {
     my ($r, $n) = @_;
     $n ||= 1;
