@@ -1,5 +1,6 @@
 0.09:
   - load the authors of ticket histories
+  - fix assert_login for login pages without a search form.
 
 0.08:
   - load ticket author as an Net::Redmine::User object
