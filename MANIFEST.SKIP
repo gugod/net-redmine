@@ -20,4 +20,5 @@
 ^[^/]+\.pl$
 ^\.shipit$
 ^\.gitignore$
+^\.prove$
 ^MYMETA\..*$
