@@ -45,13 +45,28 @@ sub assert_login {
     return if $self->is_logined;
 
     my $mech = $self->get_login_page->mechanize;
-    my $res  = $mech->submit_form(
-        form_number => 2,
-        fields      => {
+
+    my $form_n = 0;
+    my @forms = $mech->forms;
+    for (@forms) {
+        if ($_->method eq 'POST' && $_->action eq $mech->uri) {
+            last;
+        }
+        $form_n++;
+    }
+
+    if ($form_n >= @forms) {
+        die "There is no login form on the login page. (@{[ $mech->uri ]})";
+    }
+
+    my $res = $mech->submit_form(
+        form_number => $form_n,
+        fields => {
             username => $self->user,
             password => $self->password
         }
     );
+
     if ( $res->content =~ /<div class="flash error">/ ) {
         die "Can't login, invalid login or password !";
     }
