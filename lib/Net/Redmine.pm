@@ -1,6 +1,6 @@
 package Net::Redmine;
 use Any::Moose;
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 use Net::Redmine::Connection;
 use Net::Redmine::Ticket;
 use Net::Redmine::Search;

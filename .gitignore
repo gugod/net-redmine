@@ -10,4 +10,4 @@ Makefile.old
 .DS_Store
 TAGS
 .sd
-
+.prove
