@@ -39,6 +39,10 @@ sub create {
     if ($mech->uri =~ m[/issues(?:/show)?/(\d+)$]) {
         my $id = $1;
         $self->id($id);
+
+        my $live = $self->connection->_live_ticket_objects;
+        $live->{$id} = $self;
+
         return $self;
     }
 }
