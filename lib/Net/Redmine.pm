@@ -170,7 +170,7 @@ Also read the document of that class to see how to use it.
 
 The C<copy> instance method can copy an existing ticket. The id is the id
 of the original ticket we want to copy. The other values to the C<ticket>
-key is the same hasref as for C<create>.
+key is the same hashref as for C<create>.
 
 =item lookup( ticket => { id => Integer } }
 
