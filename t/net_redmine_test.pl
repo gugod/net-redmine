@@ -2,7 +2,7 @@ use Test::More;
 use Cwd 'getcwd';
 
 unless ($_ = $ENV{NET_REDMINE_RAILS_ROOT}) {
-    plan skip_all => "Need SD_REDMINE_RAILS_ROOT env var";
+    plan skip_all => "Need NET_REDMINE_RAILS_ROOT env var";
     exit;
 }
 
